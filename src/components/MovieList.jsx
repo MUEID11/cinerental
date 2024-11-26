@@ -1,5 +1,5 @@
 import { getAllMovies } from "../assets/movieData";
-import MovieCard from "./MovieCard";
+import MovieCard from '../components/MovieCard'
 const MovieList = () => {
   const movies = getAllMovies();
   return (
