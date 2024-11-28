@@ -1,18 +1,19 @@
 import { useContext } from "react";
 import { MovieContext } from "../context";
-import Delete from '../assets/delete.svg';
-import CheckOut from '../assets/icons/checkout.svg'
+import Delete from "../assets/delete.svg";
+import CheckOut from "../assets/icons/checkout.svg";
 import { getImageUrl } from "../assets/utils";
+import { toast } from "react-toastify";
 const Cart = ({ onClose }) => {
-  const { cartData, setCartData } = useContext(MovieContext);
+  const { state, dispatch } = useContext(MovieContext);
 
-  function handleDeleteItem(e, itemId) {
-    event.preventDefault();
-    const filteredItem = cartData.filter(item => {
-      return item.id !== itemId;
-    })
-
-    setCartData([...filteredItem])
+  function handleDeleteItem(e, item) {
+    e.preventDefault();
+    dispatch({
+      type: "remove",
+      payload: item,
+    });
+    toast.success(`Removed ${item.title} removed from the cart`,{position: 'bottom-right'})
   }
 
   return (
@@ -23,14 +24,14 @@ const Cart = ({ onClose }) => {
             Your Carts
           </h2>
           <div className="space-y-8 lg:space-y-12 max-h-[450px] overflow-auto mb-10 lg:mb-14">
-            {cartData.length > 0 ? (
-              cartData.map((item) => (
+            {state.cartData.length > 0 ? (
+              state.cartData.map((item) => (
                 <div key={item.id} className="grid grid-cols-[1fr_auto] gap-4">
                   <div className="flex items-center gap-4">
                     <img
                       className="rounded overflow-hidden"
-                      width={'50px'}
-                      height={'50px'}
+                      width={"50px"}
+                      height={"50px"}
                       src={getImageUrl(item.cover)}
                       alt={item.title}
                     />
@@ -39,18 +40,17 @@ const Cart = ({ onClose }) => {
                         {item.title}
                       </h3>
                       <p className="max-md:text-xs text-[#575A6E]">
-                       {item.genre}
+                        {item.genre}
                       </p>
                       <span className="max-md:text-xs">${item.price}</span>
                     </div>
                   </div>
                   <div className="flex justify-between gap-4 items-center">
-                    <button onClick={(e) => handleDeleteItem(e,item.id)} className="bg-[#D42967] rounded-md p-2 md:px-4 inline-flex items-center space-x-2 text-white">
-                      <img
-                        className="w-5 h-5"
-                        src={Delete}
-                        alt=""
-                      />
+                    <button
+                      onClick={(e) => handleDeleteItem(e, item)}
+                      className="bg-[#D42967] rounded-md p-2 md:px-4 inline-flex items-center space-x-2 text-white"
+                    >
+                      <img className="w-5 h-5" src={Delete} alt="" />
                       <span className="max-md:hidden">Remove</span>
                     </button>
                   </div>
@@ -69,12 +69,7 @@ const Cart = ({ onClose }) => {
               className="rounded-md p-2 md:px-4 inline-flex items-center space-x-2 bg-primary text-[#171923] text-sm"
               href="#"
             >
-              <img
-                src={CheckOut}
-                width="24"
-                height="24"
-                alt=""
-              />
+              <img src={CheckOut} width="24" height="24" alt="" />
               <span>Checkout</span>
             </a>
             <a
